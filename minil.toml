@@ -1,5 +1,5 @@
 name = "Syntax-Keyword-Assert"
 badges = ["github-actions/test.yml"]
-module_maker="ModuleBuildTiny"
+module_maker="ModuleBuild"
 static_install = "auto"
 

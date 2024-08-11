@@ -29,3 +29,5 @@ cover_db/
 MYMETA.*
 
 /Syntax-Keyword-Assert-*
+
+lib/Syntax/Keyword/Assert.c

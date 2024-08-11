@@ -1,9 +1,7 @@
-use strict;
-use Test::More 0.98;
+use Test2::V0;
 
-use_ok $_ for qw(
-    Syntax::Keyword::Assert
-);
+require Syntax::Keyword::Assert;
+
+pass "Modules loaded";
 
 done_testing;
-

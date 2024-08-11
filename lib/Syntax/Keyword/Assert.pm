@@ -1,11 +1,43 @@
-package Syntax::Keyword::Assert;
-use 5.008001;
-use strict;
+package Syntax::Keyword::Assert 0.10;
+
+use v5.14;
 use warnings;
 
-our $VERSION = "0.01";
+use constant STRICT => $ENV{SYNTAX_KEYWORD_ASSERT_STRICT} || 0;
 
+use Carp qw( croak );
 
+require XSLoader;
+XSLoader::load( __PACKAGE__, our $VERSION );
+
+sub import {
+   my $pkg = shift;
+   my $caller = caller;
+
+   $pkg->import_into( $caller, @_ );
+}
+
+sub unimport {
+   my $pkg = shift;
+   my $caller = caller;
+
+   $pkg->unimport_into( $caller, @_ );
+}
+
+sub import_into   { shift->apply( sub { $^H{ $_[0] }++ },      @_ ) }
+sub unimport_into { shift->apply( sub { delete $^H{ $_[0] } }, @_ ) }
+
+sub apply {
+   my $pkg = shift;
+   my ( $cb, $caller, @syms ) = @_;
+
+   @syms or @syms = qw( assert );
+
+   my %syms = map { $_ => 1 } @syms;
+   $cb->( "Syntax::Keyword::Assert/assert" ) if delete $syms{assert};
+
+   croak "Unrecognised import symbols @{[ keys %syms ]}" if keys %syms;
+}
 
 1;
 __END__
