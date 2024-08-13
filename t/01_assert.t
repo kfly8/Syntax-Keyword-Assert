@@ -7,9 +7,9 @@ BEGIN {
 use Syntax::Keyword::Assert;
 
 subtest 'simple cases' => sub {
-    ok dies {
+    like dies {
         assert { 0 };
-    };
+    }, qr/Assertion failed/;
 
     ok lives {
         assert { 1 };

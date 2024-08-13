@@ -3,7 +3,7 @@ package Syntax::Keyword::Assert 0.10;
 use v5.14;
 use warnings;
 
-use Carp qw( croak );
+use Carp ();
 use Devel::StrictMode;
 
 require XSLoader;
@@ -35,7 +35,11 @@ sub apply {
    my %syms = map { $_ => 1 } @syms;
    $cb->( "Syntax::Keyword::Assert/assert" ) if delete $syms{assert};
 
-   croak "Unrecognised import symbols @{[ keys %syms ]}" if keys %syms;
+   Carp::croak "Unrecognised import symbols @{[ keys %syms ]}" if keys %syms;
+}
+
+sub _croak {
+    goto &Carp::croak;
 }
 
 1;

@@ -26,22 +26,32 @@ static bool is_strict(pTHX_)
     return ok;
 }
 
+static OP *make_mycroak(pTHX_ OP *msg)
+{
+    GV *mycroak_gv = gv_fetchpv("Syntax::Keyword::Assert::_croak", GV_ADD, SVt_PVCV);
+    OP *mycroak    = newUNOP(OP_NULL, 0, newSVOP(OP_GV, 0, (SV *)mycroak_gv));
+
+    return newUNOP(OP_ENTERSUB, OPf_STACKED, op_append_elem(OP_LIST, msg, mycroak));
+}
+
 static int build_assert(pTHX_ OP **out, XSParseKeywordPiece *arg0, void *hookdata)
 {
-    OP *die_op;
     OP *block = arg0->op;
 
     if (is_strict()) {
         // build the following code:
         //
-        //   die "Assertion failed" unless do { $a == 1 }
+        //   Syntax::Keyword::Assert::_croak "Assertion failed"
+        //      unless do { $a == 1 }
         //
-        die_op = newLISTOP(OP_DIE, 0,
-            newOP(OP_PUSHMARK, 0),
-            newSVOP(OP_CONST, 0, newSVpv("Assertion failed", 0))
-        );
+        OP *msg = newSVOP(OP_CONST, 0, newSVpvs("Assertion failed"));
 
-        *out = newLOGOP(OP_AND, 0, newUNOP(OP_NOT, 0, block), die_op);
+        // FIXME Attempt to free unreferenced scalar: SV 0x14f7c18c8.
+
+        *out = newLOGOP(OP_AND, 0,
+            newUNOP(OP_NOT, 0, block),
+            make_mycroak(aTHX_ msg)
+        );
     }
     else {
         // do nothing.
