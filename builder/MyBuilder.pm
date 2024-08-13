@@ -1,16 +1,14 @@
 package builder::MyBuilder;
 use strict;
 use warnings;
-use base qw(Module::Build::XSUtil);
+use base qw(Module::Build);
 
 use XS::Parse::Keyword::Builder;
 
 sub new {
     my ($class, %args) = @_;
 
-    my $build = $class->SUPER::new(
-        %args,
-    );
+    my $build = $class->SUPER::new(%args);
 
     my @flags = @{ $build->extra_compiler_flags };
     push @flags, XS::Parse::Keyword::Builder->extra_compiler_flags;

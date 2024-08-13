@@ -4,7 +4,6 @@ requires 'Devel::StrictMode';
 
 on 'configure' => sub {
   requires 'Module::Build' => '0.4004';
-  requires 'Module::Build::XSUtil', '0.19';
   requires 'XS::Parse::Keyword::Builder' => '0.36';
 };
 
