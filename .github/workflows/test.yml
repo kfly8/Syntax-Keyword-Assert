@@ -23,13 +23,13 @@ jobs:
           ]
     name: Perl ${{ matrix.perl }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Setup perl
         uses: shogo82148/actions-setup-perl@v1
         with:
           perl-version: ${{ matrix.perl }}
       - name: Install dependencies
-        run: cpm install -g
+        run: cpm install -g --with-all
       - run: perl Build.PL
       - run: ./Build
       - run: ./Build test
