@@ -28,7 +28,9 @@
    "prereqs" : {
       "configure" : {
          "requires" : {
-            "Module::Build::Tiny" : "0.035"
+            "Module::Build" : "0.4005",
+            "Module::Build::XSUtil" : "0.19",
+            "XS::Parse::Keyword::Builder" : "0.36"
          }
       },
       "develop" : {
@@ -42,17 +44,29 @@
       },
       "runtime" : {
          "requires" : {
-            "perl" : "5.008001"
+            "XS::Parse::Keyword" : "0.36",
+            "perl" : "5.016000"
          }
       },
       "test" : {
          "requires" : {
-            "Test::More" : "0.98"
+            "Test2::V0" : "0.000147"
          }
       }
    },
    "release_status" : "unstable",
-   "version" : "0.01",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/kfly8/Syntax-Keyword-Assert/issues"
+      },
+      "homepage" : "https://github.com/kfly8/Syntax-Keyword-Assert",
+      "repository" : {
+         "type" : "git",
+         "url" : "https://github.com/kfly8/Syntax-Keyword-Assert.git",
+         "web" : "https://github.com/kfly8/Syntax-Keyword-Assert"
+      }
+   },
+   "version" : "0.10",
    "x_serialization_backend" : "JSON::PP version 4.16",
-   "x_static_install" : 1
+   "x_static_install" : 0
 }
