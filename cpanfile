@@ -1,5 +1,6 @@
 requires 'perl', '5.016000';
 requires 'XS::Parse::Keyword' => '0.36';
+requires 'Devel::StrictMode';
 
 on 'configure' => sub {
   requires 'Module::Build' => '0.4004';

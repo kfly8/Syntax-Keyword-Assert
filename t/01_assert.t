@@ -1,7 +1,7 @@
 use Test2::V0;
 
 BEGIN {
-    $ENV{SYNTAX_KEYWORD_ASSERT_STRICT} = 1;
+    $ENV{PERL_STRICT} = 1;
 }
 
 use Syntax::Keyword::Assert;

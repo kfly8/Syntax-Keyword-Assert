@@ -1,7 +1,11 @@
 use Test2::V0;
 
 BEGIN {
-    $ENV{SYNTAX_KEYWORD_ASSERT_STRICT} = 0;
+    # Disable STRICT mode. SEE ALSO: Devel::StrictMode
+    $ENV{EXTENDED_TESTING} = 0;
+    $ENV{AUTHOR_TESTING}   = 0;
+    $ENV{RELEASE_TESTING}  = 0;
+    $ENV{PERL_STRICT}      = 0;
 }
 
 use Syntax::Keyword::Assert;

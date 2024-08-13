@@ -3,9 +3,8 @@ package Syntax::Keyword::Assert 0.10;
 use v5.14;
 use warnings;
 
-use constant STRICT => $ENV{SYNTAX_KEYWORD_ASSERT_STRICT} || 0;
-
 use Carp qw( croak );
+use Devel::StrictMode;
 
 require XSLoader;
 XSLoader::load( __PACKAGE__, our $VERSION );
