@@ -1,19 +1,21 @@
-[![Actions Status](https://github.com/kfly8/Syntax-Keyword-Assert/actions/workflows/test.yml/badge.svg)](https://github.com/kfly8/Syntax-Keyword-Assert/actions)
+[![Actions Status](https://github.com/kfly8/Syntax-Keyword-Assert/actions/workflows/test.yml/badge.svg)](https://github.com/kfly8/Syntax-Keyword-Assert/actions) [![Coverage Status](https://img.shields.io/coveralls/kfly8/Syntax-Keyword-Assert/main.svg?style=flat)](https://coveralls.io/r/kfly8/Syntax-Keyword-Assert?branch=main) [![MetaCPAN Release](https://badge.fury.io/pl/Syntax-Keyword-Assert.svg)](https://metacpan.org/release/Syntax-Keyword-Assert)
 # NAME
 
 Syntax::Keyword::Assert - assert keyword for Perl
 
 # SYNOPSIS
 
-    use Syntax::Keyword::Assert;
+```perl
+use Syntax::Keyword::Assert;
 
-    sub hello($name) {
-        assert { defined $name };
-        say "Hello, $name!";
-    }
+sub hello($name) {
+    assert { defined $name };
+    say "Hello, $name!";
+}
 
-    hello("Alice"); # => Hello, Alice!
-    hello();        # => Dies when STRICT_MODE is enabled
+hello("Alice"); # => Hello, Alice!
+hello();        # => Dies when STRICT_MODE is enabled
+```
 
 # DESCRIPTION
 
