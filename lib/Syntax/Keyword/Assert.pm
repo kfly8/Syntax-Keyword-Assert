@@ -49,15 +49,30 @@ __END__
 
 =head1 NAME
 
-Syntax::Keyword::Assert - It's new $module
+Syntax::Keyword::Assert - assert keyword for Perl
 
 =head1 SYNOPSIS
 
     use Syntax::Keyword::Assert;
 
+    sub hello($name) {
+        assert { defined $name };
+        say "Hello, $name!";
+    }
+
+    hello("Alice"); # => Hello, Alice!
+    hello();        # => Dies when STRICT_MODE is enabled
+
 =head1 DESCRIPTION
 
-Syntax::Keyword::Assert is ...
+This module provides a syntax plugin that introduces an B<assert> keyword to Perl.
+It dies when the block returns false and C<STRICT> mode is enabled. When C<STRICT> mode is disabled, the block is ignored at compile time. The syntax is simple, C<assert BLOCK>.
+
+C<STRICT> mode is controlled by L<Devel::StrictMode>.
+
+=head1 SEE ALSO
+
+L<PerlX::Assert>, L<Devel::Assert>, L<Carp::Assert>
 
 =head1 LICENSE
 

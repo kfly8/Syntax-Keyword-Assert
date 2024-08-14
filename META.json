@@ -1,10 +1,10 @@
 {
-   "abstract" : "It's new $module",
+   "abstract" : "assert keyword for Perl",
    "author" : [
       "kobaken <kentafly88@gmail.com>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Minilla/v3.1.24, CPAN::Meta::Converter version 2.150010",
+   "generated_by" : "Minilla/v3.1.25, CPAN::Meta::Converter version 2.150010",
    "license" : [
       "perl_5"
    ],
