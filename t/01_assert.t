@@ -9,7 +9,7 @@ use Syntax::Keyword::Assert;
 subtest 'Test `assert` keyword with STRICT enabled' => sub {
     like dies {
         assert { 0 };
-    }, qr/Assertion failed/;
+    }, qr/\AAssertion failed/;
 
     ok lives {
         assert { 1 };
@@ -25,9 +25,17 @@ subtest 'Test `assert` keyword with STRICT enabled' => sub {
         $hello->('world');
     };
 
-    ok dies {
+    like dies {
         $hello->(undef);
-    };
+    }, qr/\AAssertion failed/;
+
+    like dies {
+        assert {
+            my $x = 1;
+            my $y = 2;
+            $x + $y == 100;
+        };
+    }, qr/\AAssertion failed/, 'assert block with multiple statements';
 };
 
 done_testing;

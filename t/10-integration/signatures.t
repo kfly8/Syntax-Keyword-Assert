@@ -1,7 +1,7 @@
 use Test2::V0;
-use Test2::Require::Perl 'v5.38';
+use Test2::Require::Perl 'v5.36';
 
-use v5.38;
+use feature qw(signatures);
 
 BEGIN {
     $ENV{PERL_STRICT} = 1;
