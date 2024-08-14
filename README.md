@@ -14,7 +14,7 @@ sub hello($name) {
 }
 
 hello("Alice"); # => Hello, Alice!
-hello();        # => Dies when STRICT_MODE is enabled
+hello();        # => Dies when STRICT mode is enabled
 ```
 
 # DESCRIPTION

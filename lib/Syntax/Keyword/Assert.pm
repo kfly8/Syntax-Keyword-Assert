@@ -61,7 +61,7 @@ Syntax::Keyword::Assert - assert keyword for Perl
     }
 
     hello("Alice"); # => Hello, Alice!
-    hello();        # => Dies when STRICT_MODE is enabled
+    hello();        # => Dies when STRICT mode is enabled
 
 =head1 DESCRIPTION
 
