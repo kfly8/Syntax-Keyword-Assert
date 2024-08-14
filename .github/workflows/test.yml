@@ -44,5 +44,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cpm install -g Devel::Cover::Report::Coveralls
-          cover -test -report coveralls
+          cover -test -report coveralls -ignore_re '^/opt'
 
