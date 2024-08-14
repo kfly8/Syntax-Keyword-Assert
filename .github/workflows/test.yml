@@ -25,6 +25,8 @@ jobs:
           - perl: 5.40
             coverage: true
             integration: true
+          - perl: 5.38
+            integration: true
 
     name: Perl ${{ matrix.perl }}
     steps:
