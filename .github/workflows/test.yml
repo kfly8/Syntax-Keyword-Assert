@@ -21,6 +21,10 @@ jobs:
             "5.18",
             "5.16",
           ]
+        include:
+          - perl: 5.40
+            coverage: true
+
     name: Perl ${{ matrix.perl }}
     steps:
       - uses: actions/checkout@v4
@@ -33,4 +37,12 @@ jobs:
       - run: perl Build.PL
       - run: ./Build
       - run: ./Build test
+
+      - name: Run coverage
+        if: ${{ matrix.coverage }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cpm install -g Devel::Cover::Report::Coveralls
+          cover -test -report coveralls
 
