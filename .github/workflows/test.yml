@@ -24,6 +24,7 @@ jobs:
         include:
           - perl: 5.40
             coverage: true
+            integration: true
 
     name: Perl ${{ matrix.perl }}
     steps:
@@ -32,8 +33,17 @@ jobs:
         uses: shogo82148/actions-setup-perl@v1
         with:
           perl-version: ${{ matrix.perl }}
+
       - name: Install dependencies
         run: cpm install -g --with-all
+
+      - name: Install dependencies for integration tests
+        if: ${{ matrix.integration }}
+        run: |
+          cpm install -g Type::Tiny
+          cpm install -g Data::Checks
+          cpm install -g Syntax::Operator::Is
+
       - run: perl Build.PL
       - run: ./Build
       - run: ./Build test
