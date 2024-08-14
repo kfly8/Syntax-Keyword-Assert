@@ -6,7 +6,7 @@ BEGIN {
 
 use Syntax::Keyword::Assert;
 
-subtest 'simple cases' => sub {
+subtest 'Test `assert` keyword with STRICT enabled' => sub {
     like dies {
         assert { 0 };
     }, qr/Assertion failed/;

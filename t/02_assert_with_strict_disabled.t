@@ -10,7 +10,7 @@ BEGIN {
 
 use Syntax::Keyword::Assert;
 
-subtest 'simple cases' => sub {
+subtest 'Test `assert` keyword with STRICT disabled' => sub {
     ok lives {
         assert { 0 };
     };
