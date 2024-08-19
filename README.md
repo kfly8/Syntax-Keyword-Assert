@@ -31,7 +31,7 @@ Syntax::Keyword::Assert introduces a lightweight assert keyword to Perl, designe
 
 - **Simple Syntax**
 
-    The syntax is straightforward—assert BLOCK—making it easy to integrate into existing codebases.
+    The syntax is straightforward—assert BLOCK—making it easy to integrate into existing code.
 
 ## STRICT Mode Control
 

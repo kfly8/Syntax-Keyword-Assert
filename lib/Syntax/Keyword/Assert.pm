@@ -80,7 +80,7 @@ When STRICT mode is disabled, the assert blocks are completely ignored at compil
 
 =item B<Simple Syntax>
 
-The syntax is straightforward—assert BLOCK—making it easy to integrate into existing codebases.
+The syntax is straightforward—assert BLOCK—making it easy to integrate into existing code.
 
 =back
 
