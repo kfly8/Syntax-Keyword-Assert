@@ -50,7 +50,7 @@ __END__
 
 =head1 NAME
 
-Syntax::Keyword::Assert - assert keyword for Perl
+Syntax::Keyword::Assert - assert keyword for Perl with zero runtime cost in production
 
 =head1 SYNOPSIS
 
@@ -66,10 +66,48 @@ Syntax::Keyword::Assert - assert keyword for Perl
 
 =head1 DESCRIPTION
 
-This module provides a syntax plugin that introduces an B<assert> keyword to Perl.
-It dies when the block returns false and C<STRICT> mode is enabled. When C<STRICT> mode is disabled, the block is ignored at compile time. The syntax is simple, C<assert BLOCK>.
+Syntax::Keyword::Assert introduces a lightweight assert keyword to Perl, designed to provide runtime assertions with minimal overhead.
 
-C<STRICT> mode is controlled by L<Devel::StrictMode>.
+- B<STRICT Mode>: When STRICT mode is enabled, assert statements are checked at runtime. If the assertion fails (i.e., the block returns false), the program dies with an error. This is particularly useful for catching errors during development or testing.
+
+- B<Zero Runtime Cost>: When STRICT mode is disabled, the assert blocks are completely ignored at compile time, resulting in zero runtime cost. This makes Syntax::Keyword::Assert ideal for use in production environments, as it does not introduce any performance penalties when assertions are not needed.
+
+- B<Simple Syntax>: The syntax is straightforward—assert BLOCK—making it easy to integrate into existing codebases.
+
+=head2 STRICT Mode Control
+
+The behavior of STRICT mode is controlled by the L<Devel::StrictMode> module. You can enable or disable STRICT mode depending on your environment (e.g., development, testing, production).
+
+For example, to enable STRICT mode:
+
+    BEGIN { $ENV{PERL_STRICT} = 1 }  # Enable STRICT mode
+
+    use Syntax::Keyword::Assert;
+    use Devel::StrictMode;
+
+    assert { 1 == 1 };  # Always passes
+    assert { 0 == 1 };  # Dies if STRICT mode is enabled
+
+To disable STRICT mode (it is disabled by default):
+
+    use Syntax::Keyword::Assert;
+    use Devel::StrictMode;
+
+    assert { 0 == 1 };  # Block is ignored, no runtime cost
+
+SEE ALSO:
+L<Bench | https://github.com/kfly8/Syntax-Keyword-Assert/blob/main/bench/compare-no-assertion.pl>
+
+=head1 TIPS
+
+=head2 Verbose error messages
+
+If you want to see more detailed error messages when an assertion fails, you can enable Carp::Verbose:
+
+    assert {
+        local $Carp::Verbose = 1;
+        0;
+    }
 
 =head1 SEE ALSO
 
