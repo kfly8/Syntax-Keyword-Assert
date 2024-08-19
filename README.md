@@ -21,11 +21,17 @@ hello();        # => Dies when STRICT mode is enabled
 
 Syntax::Keyword::Assert introduces a lightweight assert keyword to Perl, designed to provide runtime assertions with minimal overhead.
 
-\- **STRICT Mode**: When STRICT mode is enabled, assert statements are checked at runtime. If the assertion fails (i.e., the block returns false), the program dies with an error. This is particularly useful for catching errors during development or testing.
+- **STRICT Mode**
 
-\- **Zero Runtime Cost**: When STRICT mode is disabled, the assert blocks are completely ignored at compile time, resulting in zero runtime cost. This makes Syntax::Keyword::Assert ideal for use in production environments, as it does not introduce any performance penalties when assertions are not needed.
+    When STRICT mode is enabled, assert statements are checked at runtime. If the assertion fails (i.e., the block returns false), the program dies with an error. This is particularly useful for catching errors during development or testing.
 
-\- **Simple Syntax**: The syntax is straightforward—assert BLOCK—making it easy to integrate into existing codebases.
+- **Zero Runtime Cost**
+
+    When STRICT mode is disabled, the assert blocks are completely ignored at compile phase, resulting in zero runtime cost. This makes Syntax::Keyword::Assert ideal for use in production environments, as it does not introduce any performance penalties when assertions are not needed.
+
+- **Simple Syntax**
+
+    The syntax is straightforward—assert BLOCK—making it easy to integrate into existing codebases.
 
 ## STRICT Mode Control
 
@@ -59,9 +65,12 @@ SEE ALSO:
 
 ## Verbose error messages
 
-If you want to see more detailed error messages when an assertion fails, you can enable Carp::Verbose:
+If you set `$Carp::Verbose = 1`, you can see stack traces when an assertion fails.
 
-```
+```perl
+use Syntax::Keyword::Assert;
+use Carp;
+
 assert {
     local $Carp::Verbose = 1;
     0;
@@ -70,7 +79,13 @@ assert {
 
 # SEE ALSO
 
-[PerlX::Assert](https://metacpan.org/pod/PerlX%3A%3AAssert), [Devel::Assert](https://metacpan.org/pod/Devel%3A%3AAssert), [Carp::Assert](https://metacpan.org/pod/Carp%3A%3AAssert)
+- [PerlX::Assert](https://metacpan.org/pod/PerlX%3A%3AAssert)
+
+    This module also uses keyword plugin, but it depends on [Keyword::Simple](https://metacpan.org/pod/Keyword%3A%3ASimple).
+
+- [Devel::Assert](https://metacpan.org/pod/Devel%3A%3AAssert)
+
+    This module provides a similar functionality, but it dose not use a keyword plugin.
 
 # LICENSE
 

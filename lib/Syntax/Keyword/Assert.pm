@@ -68,11 +68,21 @@ Syntax::Keyword::Assert - assert keyword for Perl with zero runtime cost in prod
 
 Syntax::Keyword::Assert introduces a lightweight assert keyword to Perl, designed to provide runtime assertions with minimal overhead.
 
-- B<STRICT Mode>: When STRICT mode is enabled, assert statements are checked at runtime. If the assertion fails (i.e., the block returns false), the program dies with an error. This is particularly useful for catching errors during development or testing.
+=over 4
 
-- B<Zero Runtime Cost>: When STRICT mode is disabled, the assert blocks are completely ignored at compile time, resulting in zero runtime cost. This makes Syntax::Keyword::Assert ideal for use in production environments, as it does not introduce any performance penalties when assertions are not needed.
+=item B<STRICT Mode>
 
-- B<Simple Syntax>: The syntax is straightforward—assert BLOCK—making it easy to integrate into existing codebases.
+When STRICT mode is enabled, assert statements are checked at runtime. If the assertion fails (i.e., the block returns false), the program dies with an error. This is particularly useful for catching errors during development or testing.
+
+=item B<Zero Runtime Cost>
+
+When STRICT mode is disabled, the assert blocks are completely ignored at compile phase, resulting in zero runtime cost. This makes Syntax::Keyword::Assert ideal for use in production environments, as it does not introduce any performance penalties when assertions are not needed.
+
+=item B<Simple Syntax>
+
+The syntax is straightforward—assert BLOCK—making it easy to integrate into existing codebases.
+
+=back
 
 =head2 STRICT Mode Control
 
@@ -102,7 +112,10 @@ L<Bench | https://github.com/kfly8/Syntax-Keyword-Assert/blob/main/bench/compare
 
 =head2 Verbose error messages
 
-If you want to see more detailed error messages when an assertion fails, you can enable Carp::Verbose:
+If you set C<$Carp::Verbose = 1>, you can see stack traces when an assertion fails.
+
+    use Syntax::Keyword::Assert;
+    use Carp;
 
     assert {
         local $Carp::Verbose = 1;
@@ -111,7 +124,17 @@ If you want to see more detailed error messages when an assertion fails, you can
 
 =head1 SEE ALSO
 
-L<PerlX::Assert>, L<Devel::Assert>, L<Carp::Assert>
+=over 4
+
+=item L<PerlX::Assert>
+
+This module also uses keyword plugin, but it depends on L<Keyword::Simple>.
+
+=item L<Devel::Assert>
+
+This module provides a similar functionality, but it dose not use a keyword plugin.
+
+=back
 
 =head1 LICENSE
 
