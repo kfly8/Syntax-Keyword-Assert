@@ -1,12 +1,8 @@
 use Test2::V0;
 
-BEGIN {
-    $ENV{PERL_STRICT} = 1;
-}
-
 use Syntax::Keyword::Assert;
 
-subtest 'Test `assert` keyword with STRICT enabled' => sub {
+subtest 'Test `assert` keyword' => sub {
     like dies {
         assert { 0 };
     }, qr/\AAssertion failed/;

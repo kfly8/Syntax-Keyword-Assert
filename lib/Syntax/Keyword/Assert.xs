@@ -5,26 +5,7 @@
 
 #include "XSParseKeyword.h"
 
-static bool is_strict(pTHX)
-{
-    dSP;
-
-    ENTER;
-    SAVETMPS;
-
-    PUSHMARK(SP);
-    call_pv("Syntax::Keyword::Assert::STRICT", G_SCALAR);
-    SPAGAIN;
-
-    bool ok = SvTRUEx(POPs);
-
-    PUTBACK;
-
-    FREETMPS;
-    LEAVE;
-
-    return ok;
-}
+static bool assert_enabled = TRUE;
 
 static OP *make_xcroak(pTHX_ OP *msg)
 {
@@ -39,22 +20,23 @@ static OP *make_xcroak(pTHX_ OP *msg)
 
 static int build_assert(pTHX_ OP **out, XSParseKeywordPiece *arg0, void *hookdata)
 {
-    if (is_strict(aTHX)) {
+    OP *argop = arg0->op;
+    if (assert_enabled) {
         // build the following code:
         //
         //   Syntax::Keyword::Assert::_croak "Assertion failed"
         //      unless do { $a == 1 }
         //
-        OP *block = arg0->op;
         OP *msg = newSVOP(OP_CONST, 0, newSVpvs("Assertion failed"));
 
         *out = newLOGOP(OP_AND, 0,
-            newUNOP(OP_NOT, 0, block),
+            newUNOP(OP_NOT, 0, argop),
             make_xcroak(aTHX_ msg)
         );
     }
     else {
         // do nothing.
+        op_free(argop);
         *out = newOP(OP_NULL, 0);
     }
 
@@ -72,3 +54,13 @@ MODULE = Syntax::Keyword::Assert    PACKAGE = Syntax::Keyword::Assert
 BOOT:
   boot_xs_parse_keyword(0.36);
   register_xs_parse_keyword("assert", &hooks_assert, NULL);
+
+  {
+    const char *enabledstr = getenv("PERL_ASSERT_ENABLED");
+    if(enabledstr) {
+      SV *sv = newSVpvn(enabledstr, strlen(enabledstr));
+      if(!SvTRUE(sv))
+        assert_enabled = FALSE;
+    }
+  }
+
