@@ -4,7 +4,6 @@ use v5.14;
 use warnings;
 
 use Carp ();
-use Devel::StrictMode;
 
 require XSLoader;
 XSLoader::load( __PACKAGE__, our $VERSION );
@@ -72,7 +71,7 @@ Syntax::Keyword::Assert introduces a lightweight assert keyword to Perl, designe
 
 =item B<STRICT Mode>
 
-When STRICT mode is enabled, assert statements are checked at runtime. If the assertion fails (i.e., the block returns false), the program dies with an error. This is particularly useful for catching errors during development or testing.
+When STRICT mode is enabled, assert statements are checked at runtime. Default is enabled. If the assertion fails (i.e., the block returns false), the program dies with an error. This is particularly useful for catching errors during development or testing.
 
 =item B<Zero Runtime Cost>
 
@@ -86,23 +85,13 @@ The syntax is straightforward—assert BLOCK—making it easy to integrate into 
 
 =head2 STRICT Mode Control
 
-The behavior of STRICT mode is controlled by the L<Devel::StrictMode> module. You can enable or disable STRICT mode depending on your environment (e.g., development, testing, production).
+If C<$ENV{PERL_ASSERT_ENABLED}> is trusy, STRICT mode is enabled. Otherwise, it is disabled. Default is enabled.
 
-For example, to enable STRICT mode:
-
-    BEGIN { $ENV{PERL_STRICT} = 1 }  # Enable STRICT mode
+    BEGIN { $ENV{PERL_ASSERT_ENABLED} = 0 }  # Disable STRICT mode
 
     use Syntax::Keyword::Assert;
-    use Devel::StrictMode;
 
     assert { 1 == 1 };  # Always passes
-    assert { 0 == 1 };  # Dies if STRICT mode is enabled
-
-To disable STRICT mode (it is disabled by default):
-
-    use Syntax::Keyword::Assert;
-    use Devel::StrictMode;
-
     assert { 0 == 1 };  # Block is ignored, no runtime cost
 
 SEE ALSO:
