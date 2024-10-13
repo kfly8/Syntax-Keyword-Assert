@@ -22,6 +22,9 @@ static int build_assert(pTHX_ OP **out, XSParseKeywordPiece *arg0, void *hookdat
 {
     OP *argop = arg0->op;
     if (assert_enabled) {
+        // int optype = argop->op_type;
+        // printf("optype: %d\n", optype);
+
         // build the following code:
         //
         //   Syntax::Keyword::Assert::_croak "Assertion failed"
@@ -40,12 +43,12 @@ static int build_assert(pTHX_ OP **out, XSParseKeywordPiece *arg0, void *hookdat
         *out = newOP(OP_NULL, 0);
     }
 
-    return KEYWORD_PLUGIN_STMT;
+    return KEYWORD_PLUGIN_EXPR;
 }
 
 static const struct XSParseKeywordHooks hooks_assert = {
   .permit_hintkey = "Syntax::Keyword::Assert/assert",
-  .piece1 = XPK_BLOCK,
+  .piece1 = XPK_TERMEXPR_SCALARCTX,
   .build1 = &build_assert,
 };
 

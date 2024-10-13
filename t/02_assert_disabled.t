@@ -8,16 +8,16 @@ use Syntax::Keyword::Assert;
 
 subtest 'Test `assert` keyword when $ENV{PERL_ASSERT_ENABLED} is falsy' => sub {
     ok lives {
-        assert { 0 };
+        assert( 0 );
     };
 
     ok lives {
-        assert { 1 };
+        assert( 1 );
     };
 
     my $hello = sub {
         my ($message) = @_;
-        assert { defined $message };
+        assert( defined $message );
         return "Hello, $message!";
     };
 
