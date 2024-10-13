@@ -12,7 +12,7 @@ use Syntax::Keyword::Assert;
 subtest 'Test `assert` with signatures' => sub {
 
     my sub hello($name) {
-        assert { defined $name };
+        assert ( defined $name );
         return "Hello, $name!";
     }
 

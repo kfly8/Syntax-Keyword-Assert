@@ -10,11 +10,11 @@ use Types::Standard -types;
 
 subtest 'Test `assert` with Type::Tiny' => sub {
     ok lives {
-        assert { Str->check('hello') };
+        assert ( Str->check('hello') );
     };
 
     ok dies {
-        assert { Str->check({}) };
+        assert ( Str->check({}) );
     };
 };
 

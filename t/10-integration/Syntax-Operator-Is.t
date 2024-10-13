@@ -12,11 +12,11 @@ use Data::Checks qw( Str );
 
 subtest 'Test `assert` with Syntax::Operator::Is' => sub {
     ok lives {
-        assert { 'hello' is_ Str };
+        assert ( 'hello' is_ Str );
     };
 
     ok dies {
-        assert { {} is_ Str };
+        assert ( {} is_ Str );
     };
 };
 

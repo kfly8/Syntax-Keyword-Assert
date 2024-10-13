@@ -56,7 +56,7 @@ Syntax::Keyword::Assert - assert keyword for Perl with zero runtime cost in prod
     use Syntax::Keyword::Assert;
 
     sub hello($name) {
-        assert { defined $name };
+        assert( defined $name );
         say "Hello, $name!";
     }
 
@@ -91,8 +91,8 @@ If C<$ENV{PERL_ASSERT_ENABLED}> is trusy, STRICT mode is enabled. Otherwise, it 
 
     use Syntax::Keyword::Assert;
 
-    assert { 1 == 1 };  # Always passes
-    assert { 0 == 1 };  # Block is ignored, no runtime cost
+    assert ( 1 == 1 );  # Always passes
+    assert ( 0 == 1 );  # Block is ignored, no runtime cost
 
 SEE ALSO:
 L<Bench | https://github.com/kfly8/Syntax-Keyword-Assert/blob/main/bench/compare-no-assertion.pl>

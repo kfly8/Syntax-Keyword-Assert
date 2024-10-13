@@ -10,11 +10,11 @@ use Data::Checks qw( Str );
 
 subtest 'Test `assert` with Data::Checks' => sub {
     ok lives {
-        assert { Str->check('hello') };
+        assert ( Str->check('hello') );
     };
 
     ok dies {
-        assert { Str->check({}) };
+        assert ( Str->check({}) );
     };
 };
 
