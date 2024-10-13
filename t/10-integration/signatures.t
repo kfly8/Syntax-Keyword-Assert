@@ -3,10 +3,6 @@ use Test2::Require::Perl 'v5.36';
 
 use feature qw(signatures);
 
-BEGIN {
-    $ENV{PERL_STRICT} = 1;
-}
-
 use Syntax::Keyword::Assert;
 
 subtest 'Test `assert` with signatures' => sub {

@@ -1,10 +1,6 @@
 use Test2::V0;
 use Test2::Require::Module 'Data::Checks', '0.09';
 
-BEGIN {
-    $ENV{PERL_STRICT} = 1;
-}
-
 use Syntax::Keyword::Assert;
 use Data::Checks qw( Str );
 
