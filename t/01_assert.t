@@ -34,23 +34,4 @@ subtest 'Test `assert` keyword' => sub {
 
 };
 
-subtest 'Test `assert` with Carp::Verbose' => sub {
-    subtest 'When Carp::Verbose is enabled' => sub {
-        my $error = dies {
-            local $Carp::Verbose = 1;
-            assert( 0 )
-        };
-        my @errors = split /\n/, $error;
-        ok @errors > 1;
-    };
-
-    subtest 'When Carp::Verbose is disabled' => sub {
-        my $error = dies {
-            assert ( 0 ) # Default is Carp::Verbose = 0
-        };
-        my @errors = split /\n/, $error;
-        is @errors, 1;
-    };
-};
-
 done_testing;

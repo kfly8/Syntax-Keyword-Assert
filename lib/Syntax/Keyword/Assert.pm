@@ -37,11 +37,6 @@ sub apply {
    Carp::croak "Unrecognised import symbols @{[ keys %syms ]}" if keys %syms;
 }
 
-# called from Assert.xs
-sub _croak {
-    goto &Carp::croak;
-}
-
 1;
 __END__
 

@@ -5,37 +5,31 @@
 
 #include "XSParseKeyword.h"
 
+#define HAVE_PERL_VERSION(R, V, S) \
+    (PERL_REVISION > (R) || (PERL_REVISION == (R) && (PERL_VERSION > (V) || (PERL_VERSION == (V) && (PERL_SUBVERSION >= (S))))))
+
+#include "newUNOP_CUSTOM.c.inc"
+
 static bool assert_enabled = TRUE;
 
-static OP *make_xcroak(pTHX_ OP *msg)
+static XOP xop_assert;
+static OP *pp_assert(pTHX)
 {
-    OP *xcroak;
-    xcroak = newCVREF(
-        OPf_WANT_SCALAR,
-        newSVOP(OP_CONST, 0, newSVpvs("Syntax::Keyword::Assert::_croak"))
-    );
-    xcroak = newUNOP(OP_ENTERSUB, OPf_STACKED, op_append_elem(OP_LIST, msg, xcroak));
-    return xcroak;
+  dSP;
+  SV *val = POPs;
+
+  if(SvTRUE(val))
+    RETURN;
+
+  SV *msg = sv_2mortal(newSVpvs("Assertion failed"));
+  croak_sv(msg);
 }
 
 static int build_assert(pTHX_ OP **out, XSParseKeywordPiece *arg0, void *hookdata)
 {
     OP *argop = arg0->op;
     if (assert_enabled) {
-        // int optype = argop->op_type;
-        // printf("optype: %d\n", optype);
-
-        // build the following code:
-        //
-        //   Syntax::Keyword::Assert::_croak "Assertion failed"
-        //      unless do { $a == 1 }
-        //
-        OP *msg = newSVOP(OP_CONST, 0, newSVpvs("Assertion failed"));
-
-        *out = newLOGOP(OP_AND, 0,
-            newUNOP(OP_NOT, 0, argop),
-            make_xcroak(aTHX_ msg)
-        );
+        *out = newUNOP_CUSTOM(&pp_assert, 0, argop);
     }
     else {
         // do nothing.
@@ -56,6 +50,12 @@ MODULE = Syntax::Keyword::Assert    PACKAGE = Syntax::Keyword::Assert
 
 BOOT:
   boot_xs_parse_keyword(0.36);
+
+  XopENTRY_set(&xop_assert, xop_name, "assert");
+  XopENTRY_set(&xop_assert, xop_desc, "assert");
+  XopENTRY_set(&xop_assert, xop_class, OA_UNOP);
+  Perl_custom_op_register(aTHX_ &pp_assert, &xop_assert);
+
   register_xs_parse_keyword("assert", &hooks_assert, NULL);
 
   {
