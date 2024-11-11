@@ -25,13 +25,36 @@ subtest 'Test `assert` keyword' => sub {
         $hello->(undef);
     }, qr/\AAssertion failed/;
 
+
+};
+
+subtest 'Test `assert(binary)` keyword' => sub {
     like dies {
-        my $x = 1;
-        my $y = 2;
+        assert( 1 == 0 );
+    }, qr/\AAssertion failed/;
 
+    ok lives {
+        assert( 1 == 1 );
+    };
+
+    my $x = 1;
+    my $y = 2;
+
+    like dies {
         assert( $x + $y == 100 );
-    }, qr/\AAssertion failed/, 'assert block with multiple statements';
+    }, qr/\AAssertion failed/;
 
+    ok lives {
+        assert( $x + $y == 3 );
+    };
+
+    like dies {
+        assert( 'hello' eq 'world' );
+    }, qr/\AAssertion failed/;
+
+    ok lives {
+        assert( 'hello' eq 'hello' );
+    };
 };
 
 done_testing;
