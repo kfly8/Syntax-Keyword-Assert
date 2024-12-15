@@ -14,6 +14,33 @@
 
 static bool assert_enabled = TRUE;
 
+#define sv_catsv_unqq(sv, val)  S_sv_catsv_unqq(aTHX_ sv, val)
+static void S_sv_catsv_unqq(pTHX_ SV *sv, SV *val)
+{
+  if(!SvOK(val)) {
+    sv_catpvs(sv, "undef");
+    return;
+  }
+
+#ifdef SvIsBOOL
+  if(SvIsBOOL(val)) {
+    SvTRUE(val) ? sv_catpvs(sv, "true") : sv_catpvs(sv, "false");
+    return;
+  }
+#endif
+
+  if(!SvPOK(val)) {
+    sv_catsv(sv, val);
+    return;
+  }
+
+#ifdef SVf_QUOTEDPREFIX
+  sv_catpvf(sv, "%" SVf_QUOTEDPREFIX, SVfARG(val));
+#else
+  sv_catpvf(sv, "\"%" SVf "\"", SVfARG(val));
+#endif
+}
+
 static XOP xop_assert;
 static OP *pp_assert(pTHX)
 {
@@ -23,7 +50,9 @@ static OP *pp_assert(pTHX)
   if(SvTRUE(val))
     RETURN;
 
-  SV *msg = sv_2mortal(newSVpvs("Assertion failed"));
+  SV *msg = sv_2mortal(newSVpvs("Assertion failed (got "));
+  sv_catsv_unqq(msg, val);
+  sv_catpvs(msg, ")");
   croak_sv(msg);
 }
 
@@ -65,7 +94,11 @@ static OP *pp_assertbin(pTHX)
       croak("ARGH unreachable");
   }
 
-  SV *msg = sv_2mortal(newSVpvs("Assertion failed"));
+  SV *msg = sv_2mortal(newSVpvs("Assertion failed (got "));
+  sv_catsv_unqq(msg, lhs);
+  sv_catpvs(msg, ", expected ");
+  sv_catsv_unqq(msg, rhs);
+  sv_catpvs(msg, ")");
   croak_sv(msg);
 
 ok:
