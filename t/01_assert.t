@@ -24,6 +24,7 @@ subtest 'Test `assert` keyword' => sub {
     like dies { assert( 0 ) }, qr/\AAssertion failed \(0\)/;
     like dies { assert( '0' ) }, qr/\AAssertion failed \("0"\)/;
     like dies { assert( '' ) }, qr/\AAssertion failed \(""\)/;
+    like dies { assert( !1 ) }, qr/\AAssertion failed \(false\)/;
 };
 
 subtest 'Test `assert(binary)` keyword' => sub {
@@ -35,6 +36,8 @@ subtest 'Test `assert(binary)` keyword' => sub {
 
         like dies { assert( $x + $y == 100 ) },   qr/\AAssertion failed \(3 == 100\)/;
         like dies { assert( $x == 100 ) },        qr/\AAssertion failed \(1 == 100\)/;
+        like dies { assert( !$x == 100 ) },        qr/\AAssertion failed \(false == 100\)/;
+        like dies { assert( !!$x == 100 ) },        qr/\AAssertion failed \(true == 100\)/;
 
         my $message = 'hello';
         my $undef = undef;
