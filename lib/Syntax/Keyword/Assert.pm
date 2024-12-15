@@ -92,20 +92,6 @@ If C<$ENV{PERL_ASSERT_ENABLED}> is trusy, STRICT mode is enabled. Otherwise, it 
 SEE ALSO:
 L<Bench | https://github.com/kfly8/Syntax-Keyword-Assert/blob/main/bench/compare-no-assertion.pl>
 
-=head1 TIPS
-
-=head2 Verbose error messages
-
-If you set C<$Carp::Verbose = 1>, you can see stack traces when an assertion fails.
-
-    use Syntax::Keyword::Assert;
-    use Carp;
-
-    assert {
-        local $Carp::Verbose = 1;
-        0;
-    }
-
 =head1 SEE ALSO
 
 =over 4
