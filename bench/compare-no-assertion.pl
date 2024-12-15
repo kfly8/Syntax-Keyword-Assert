@@ -28,7 +28,7 @@ use Syntax::Keyword::Assert;
 
 # Function with assertion block but it is ignored at runtime
 sub with_assertion($message) {
-    assert { defined $message };
+    assert( defined $message );
     return $message;
 }
 

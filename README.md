@@ -8,13 +8,9 @@ Syntax::Keyword::Assert - assert keyword for Perl with zero runtime cost in prod
 ```perl
 use Syntax::Keyword::Assert;
 
-sub hello($name) {
-    assert { defined $name };
-    say "Hello, $name!";
-}
-
-hello("Alice"); # => Hello, Alice!
-hello();        # => Dies when STRICT mode is enabled
+my $name = 'Alice';
+assert( $name eq 'Bob' );
+# => Assertion failed ("Alice" eq "Bob")
 ```
 
 # DESCRIPTION
@@ -25,45 +21,23 @@ Syntax::Keyword::Assert introduces a lightweight assert keyword to Perl, designe
 
     When STRICT mode is enabled, assert statements are checked at runtime. Default is enabled. If the assertion fails (i.e., the block returns false), the program dies with an error. This is particularly useful for catching errors during development or testing.
 
+    `$ENV{PERL_ASSERT_ENABLED}` can be used to control STRICT mode.
+
+    ```
+    BEGIN { $ENV{PERL_ASSERT_ENABLED} = 0 }  # Disable STRICT mode
+    ```
+
 - **Zero Runtime Cost**
 
     When STRICT mode is disabled, the assert blocks are completely ignored at compile phase, resulting in zero runtime cost. This makes Syntax::Keyword::Assert ideal for use in production environments, as it does not introduce any performance penalties when assertions are not needed.
 
 - **Simple Syntax**
 
-    The syntax is straightforward—assert BLOCK—making it easy to integrate into existing code.
+    The syntax is dead simple. Just use the assert keyword followed by a block that returns a boolean value.
 
-## STRICT Mode Control
-
-If `$ENV{PERL_ASSERT_ENABLED}` is trusy, STRICT mode is enabled. Otherwise, it is disabled. Default is enabled.
-
-```perl
-BEGIN { $ENV{PERL_ASSERT_ENABLED} = 0 }  # Disable STRICT mode
-
-use Syntax::Keyword::Assert;
-
-assert { 1 == 1 };  # Always passes
-assert { 0 == 1 };  # Block is ignored, no runtime cost
-```
-
-SEE ALSO:
-[Bench ](https://metacpan.org/pod/%20https%3A#github.com-kfly8-Syntax-Keyword-Assert-blob-main-bench-compare-no-assertion.pl)
-
-# TIPS
-
-## Verbose error messages
-
-If you set `$Carp::Verbose = 1`, you can see stack traces when an assertion fails.
-
-```perl
-use Syntax::Keyword::Assert;
-use Carp;
-
-assert {
-    local $Carp::Verbose = 1;
-    0;
-}
-```
+    ```
+    assert( $name eq 'Bob' );
+    ```
 
 # SEE ALSO
 
