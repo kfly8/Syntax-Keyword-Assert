@@ -52,8 +52,10 @@ subtest 'Test `assert(binary)` keyword' => sub {
         like dies { assert( $undef == 100 ) },    qr/\AAssertion failed \(got undef, expected 100\)/;
 
         like dies { assert( $message eq 'world' ) }, qr/\AAssertion failed \(got "hello", expected "world"\)/;
-        like dies { assert( $x eq 'world' ) },       qr/\AAssertion failed \(got 1, expected "world"\)/;
         like dies { assert( $undef eq 'world' ) },   qr/\AAssertion failed \(got undef, expected "world"\)/;
+
+        my $expected = $] >= 5.036 ? qr/\AAssertion failed \(got 1, expected "world"\)/ : qr/\AAssertion failed \(got/;
+        like dies { assert( $x eq 'world' ) }, $expected;
     };
 
     # Suppressed warnings, first string comparison by numeric eq, other undef comparison
