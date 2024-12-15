@@ -50,7 +50,7 @@ static OP *pp_assert(pTHX)
   if(SvTRUE(val))
     RETURN;
 
-  SV *msg = sv_2mortal(newSVpvs("Assertion failed (got "));
+  SV *msg = sv_2mortal(newSVpvs("Assertion failed ("));
   sv_catsv_unqq(msg, val);
   sv_catpvs(msg, ")");
   croak_sv(msg);
@@ -58,15 +58,19 @@ static OP *pp_assert(pTHX)
 
 enum BinopType {
     BINOP_NONE,
-    BINOP_NUMEQ,
-    BINOP_STREQ,
+    BINOP_NUM_EQ,
+    BINOP_NUM_NE,
+    BINOP_STR_EQ,
+    BINOP_STR_NE,
 };
 
 static enum BinopType classify_binop(int type)
 {
   switch(type) {
-    case OP_EQ:  return BINOP_NUMEQ;
-    case OP_SEQ: return BINOP_STREQ;
+    case OP_EQ:  return BINOP_NUM_EQ;
+    case OP_NE:  return BINOP_NUM_NE;
+    case OP_SEQ: return BINOP_STR_EQ;
+    case OP_SNE: return BINOP_STR_NE;
   }
   return BINOP_NONE;
 }
@@ -79,24 +83,45 @@ static OP *pp_assertbin(pTHX)
   SV *lhs = POPs;
   enum BinopType binoptype = PL_op->op_private;
 
+  const char *op_str;
+
   switch(binoptype) {
-    case BINOP_NUMEQ:
+    case BINOP_NUM_EQ:
       if(sv_numeq(lhs, rhs))
         goto ok;
+
+      op_str = "==";
       break;
 
-    case BINOP_STREQ:
+    case BINOP_NUM_NE:
+      if(!sv_numeq(lhs, rhs))
+        goto ok;
+
+      op_str = "!=";
+      break;
+
+    case BINOP_STR_EQ:
       if(sv_streq(lhs, rhs))
         goto ok;
+
+      op_str = "eq";
+      break;
+
+    case BINOP_STR_NE:
+      if(!sv_streq(lhs, rhs))
+          goto ok;
+
+      op_str = "ne";
       break;
 
     default:
       croak("ARGH unreachable");
   }
 
-  SV *msg = sv_2mortal(newSVpvs("Assertion failed (got "));
+  SV *msg = sv_2mortal(newSVpvs("Assertion failed ("));
+
   sv_catsv_unqq(msg, lhs);
-  sv_catpvs(msg, ", expected ");
+  sv_catpvf(msg, " %s ", op_str);
   sv_catsv_unqq(msg, rhs);
   sv_catpvs(msg, ")");
   croak_sv(msg);
