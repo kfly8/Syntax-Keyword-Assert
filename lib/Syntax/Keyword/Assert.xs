@@ -9,6 +9,8 @@
     (PERL_REVISION > (R) || (PERL_REVISION == (R) && (PERL_VERSION > (V) || (PERL_VERSION == (V) && (PERL_SUBVERSION >= (S))))))
 
 #include "newUNOP_CUSTOM.c.inc"
+#include "sv_numeq.c.inc"
+#include "sv_streq.c.inc"
 
 static bool assert_enabled = TRUE;
 
