@@ -110,6 +110,28 @@ subtest 'Test `assert(binary)` keyword' => sub {
         like dies { assert( $unicode gt 'う' ) }, qr/\AAssertion failed \("い" gt "う"\)/;
     };
 
+    subtest 'STR_LE' => sub {
+        my $message = 'b';
+        like dies { assert( $message le 'a' ) }, qr/\AAssertion failed \("b" le "a"\)/;
+        ok lives { assert( $message le 'b' ) };
+        ok lives { assert( $message le 'c' ) };
+
+        my $unicode = "い";
+        like dies { assert( $unicode le 'あ' ) }, qr/\AAssertion failed \("い" le "あ"\)/;
+        ok lives { assert( $unicode le 'い' ) };
+        ok lives { assert( $unicode le 'う' ) };
+    };
+
+    subtest 'STR_GE' => sub {
+        my $message = 'b';
+        ok lives { assert( $message ge 'a' ) };
+        ok lives { assert( $message ge 'b' ) };
+        like dies { assert( $message ge 'c' ) }, qr/\AAssertion failed \("b" ge "c"\)/;
+
+        my $unicode = "い";
+        ok lives { assert( $unicode ge 'あ' ) };
+        ok lives { assert( $unicode ge 'い' ) };
+        like dies { assert( $unicode ge 'う' ) }, qr/\AAssertion failed \("い" ge "う"\)/;
     };
 };
 

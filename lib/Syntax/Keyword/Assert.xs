@@ -64,6 +64,8 @@ enum BinopType {
     BINOP_STR_NE,
     BINOP_STR_LT,
     BINOP_STR_GT,
+    BINOP_STR_LE,
+    BINOP_STR_GE,
 };
 
 static enum BinopType classify_binop(int type)
@@ -75,6 +77,8 @@ static enum BinopType classify_binop(int type)
     case OP_SNE: return BINOP_STR_NE;
     case OP_SLT: return BINOP_STR_LT;
     case OP_SGT: return BINOP_STR_GT;
+    case OP_SLE: return BINOP_STR_LE;
+    case OP_SGE: return BINOP_STR_GE;
   }
   return BINOP_NONE;
 }
@@ -130,6 +134,20 @@ static OP *pp_assertbin(pTHX)
         goto ok;
 
       op_str = "gt";
+      break;
+
+    case BINOP_STR_LE:
+      if(sv_cmp(lhs, rhs) != 1)
+        goto ok;
+
+      op_str = "le";
+      break;
+
+    case BINOP_STR_GE:
+      if(sv_cmp(lhs, rhs) != -1)
+        goto ok;
+
+      op_str = "ge";
       break;
 
     default:
