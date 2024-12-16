@@ -85,6 +85,32 @@ subtest 'Test `assert(binary)` keyword' => sub {
         ok lives { assert( $message ne 'world' ) };
         like dies { assert( $message ne 'hello' ) }, qr/\AAssertion failed \("hello" ne "hello"\)/;
     };
+
+    subtest 'STR_LT' => sub {
+        my $message = 'b';
+        like dies { assert( $message lt 'a' ) }, qr/\AAssertion failed \("b" lt "a"\)/;
+        like dies { assert( $message lt 'b' ) }, qr/\AAssertion failed \("b" lt "b"\)/;
+        ok lives { assert( $message lt 'c' ) };
+
+        my $unicode = "い";
+        like dies { assert( $unicode lt 'あ' ) }, qr/\AAssertion failed \("い" lt "あ"\)/;
+        like dies { assert( $unicode lt 'い' ) }, qr/\AAssertion failed \("い" lt "い"\)/;
+        ok lives { assert( $unicode lt 'う' ) };
+    };
+
+    subtest 'STR_GT' => sub {
+        my $message = 'b';
+        ok lives { assert( $message gt 'a' ) };
+        like dies { assert( $message gt 'b' ) }, qr/\AAssertion failed \("b" gt "b"\)/;
+        like dies { assert( $message gt 'c' ) }, qr/\AAssertion failed \("b" gt "c"\)/;
+
+        my $unicode = "い";
+        ok lives { assert( $unicode gt 'あ' ) };
+        like dies { assert( $unicode gt 'い' ) }, qr/\AAssertion failed \("い" gt "い"\)/;
+        like dies { assert( $unicode gt 'う' ) }, qr/\AAssertion failed \("い" gt "う"\)/;
+    };
+
+    };
 };
 
 done_testing;
