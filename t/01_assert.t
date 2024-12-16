@@ -61,6 +61,50 @@ subtest 'Test `assert(binary)` keyword' => sub {
         like dies { assert( $x != 2 ) }, qr/\AAssertion failed \(2 != 2\)/;
     };
 
+    subtest 'NUM_LT' => sub {
+        my $x = 2;
+        like dies { assert( $x < 1 ) }, qr/\AAssertion failed \(2 < 1\)/;
+        like dies { assert( $x < 2 ) }, qr/\AAssertion failed \(2 < 2\)/;
+        ok lives { assert( $x < 3 ) };
+
+        my $x2 = 2.01;
+        like dies { assert( $x2 < 2 ) }, qr/\AAssertion failed \(2.01 < 2\)/;
+        like dies { assert( $x2 < 2.01 ) }, qr/\AAssertion failed \(2.01 < 2.01\)/;
+        ok lives { assert( $x2 < 3 ) };
+
+        my $x3 = -1;
+        ok lives { assert( $x3 < 0 ) };
+        like dies { assert( $x3 < -1 ) }, qr/\AAssertion failed \(-1 < -1\)/;
+        like dies { assert( $x3 < -2 ) }, qr/\AAssertion failed \(-1 < -2\)/;
+
+        my $x4 = -1.01;
+        ok lives { assert( $x4 < 0 ) };
+        like dies { assert( $x4 < -1.01 ) }, qr/\AAssertion failed \(-1.01 < -1.01\)/;
+        like dies { assert( $x4 < -2 ) }, qr/\AAssertion failed \(-1.01 < -2\)/;
+    };
+
+    subtest 'NUM_GT' => sub {
+        my $x = 2;
+        ok lives { assert( $x > 1 ) };
+        like dies { assert( $x > 2 ) }, qr/\AAssertion failed \(2 > 2\)/;
+        like dies { assert( $x > 3 ) }, qr/\AAssertion failed \(2 > 3\)/;
+
+        my $x2 = 2.01;
+        ok lives { assert( $x2 > 2 ) };
+        like dies { assert( $x2 > 2.01 ) }, qr/\AAssertion failed \(2.01 > 2.01\)/;
+        like dies { assert( $x2 > 3 ) }, qr/\AAssertion failed \(2.01 > 3\)/;
+
+        my $x3 = -1;
+        like dies { assert( $x3 > 0 ) }, qr/\AAssertion failed \(-1 > 0\)/;
+        like dies { assert( $x3 > -1 ) }, qr/\AAssertion failed \(-1 > -1\)/;
+        ok lives { assert( $x3 > -2 ) };
+
+        my $x4 = -1.01;
+        like dies { assert( $x4 > 0 ) }, qr/\AAssertion failed \(-1.01 > 0\)/;
+        like dies { assert( $x4 > -1.01 ) }, qr/\AAssertion failed \(-1.01 > -1.01\)/;
+        ok lives { assert( $x4 > -2 ) };
+    };
+
     subtest 'STR_EQ' => sub {
         my $message = 'hello';
 

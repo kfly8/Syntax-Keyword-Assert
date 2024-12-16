@@ -10,6 +10,7 @@
 
 #include "newUNOP_CUSTOM.c.inc"
 #include "sv_numeq.c.inc"
+#include "sv_numcmp.c.inc"
 #include "sv_streq.c.inc"
 
 static bool assert_enabled = TRUE;
@@ -60,6 +61,8 @@ enum BinopType {
     BINOP_NONE,
     BINOP_NUM_EQ,
     BINOP_NUM_NE,
+    BINOP_NUM_LT,
+    BINOP_NUM_GT,
     BINOP_STR_EQ,
     BINOP_STR_NE,
     BINOP_STR_LT,
@@ -73,6 +76,8 @@ static enum BinopType classify_binop(int type)
   switch(type) {
     case OP_EQ:  return BINOP_NUM_EQ;
     case OP_NE:  return BINOP_NUM_NE;
+    case OP_LT:  return BINOP_NUM_LT;
+    case OP_GT:  return BINOP_NUM_GT;
     case OP_SEQ: return BINOP_STR_EQ;
     case OP_SNE: return BINOP_STR_NE;
     case OP_SLT: return BINOP_STR_LT;
@@ -106,6 +111,20 @@ static OP *pp_assertbin(pTHX)
         goto ok;
 
       op_str = "!=";
+      break;
+
+    case BINOP_NUM_LT:
+      if(sv_numcmp(lhs, rhs) == -1)
+        goto ok;
+
+      op_str = "<";
+      break;
+
+    case BINOP_NUM_GT:
+      if(sv_numcmp(lhs, rhs) == 1)
+        goto ok;
+
+      op_str = ">";
       break;
 
     case BINOP_STR_EQ:
