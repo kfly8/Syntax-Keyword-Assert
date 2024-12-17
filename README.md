@@ -62,11 +62,3 @@ it under the same terms as Perl itself.
 # AUTHOR
 
 kobaken <kentafly88@gmail.com>
-
-# POD ERRORS
-
-Hey! **The above document had some coding errors, which are explained below:**
-
-- Around line 80:
-
-    &#x3d;back without =over

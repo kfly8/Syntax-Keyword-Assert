@@ -77,8 +77,6 @@ Here are some examples:
     assert(123 != 123);           # => Assertion failed (123 != 123)
     assert(1 > 10);               # => Assertion failed (1 > 10)
 
-=back
-
 =head1 SEE ALSO
 
 =over 4
