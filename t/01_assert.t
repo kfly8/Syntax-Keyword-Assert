@@ -2,180 +2,201 @@ use Test2::V0;
 
 use Syntax::Keyword::Assert;
 
+use constant HAS_36 => $] >= 5.036;
+
 subtest 'Test `assert` keyword' => sub {
     like dies {
-        assert( 0 );
+        assert(0);
     }, qr/\AAssertion failed/;
 
     ok lives {
-        assert( 1 );
+        assert(1);
     };
 
     my $hello = sub {
         my ($message) = @_;
-        assert( defined $message );
+        assert(defined $message);
         return "Hello, $message!";
     };
 
     ok lives { $hello->('world') };
     ok dies { $hello->(undef) };
 
-    like dies { assert( undef ) }, qr/\AAssertion failed \(undef\)/;
-    like dies { assert( 0 ) }, qr/\AAssertion failed \(0\)/;
-    like dies { assert( '0' ) }, qr/\AAssertion failed \("0"\)/;
-    like dies { assert( '' ) }, qr/\AAssertion failed \(""\)/;
+    like dies { assert(undef) }, qr/\AAssertion failed \(undef\)/;
+    like dies { assert(0) },     qr/\AAssertion failed \(0\)/;
+    like dies { assert('0') },   qr/\AAssertion failed \("0"\)/;
+    like dies { assert('') },    qr/\AAssertion failed \(""\)/;
 
-    my $false = $] >= 5.036 ? 'false' : '""';
-    like dies { assert( !1 ) }, qr/\AAssertion failed \($false\)/;
+    my $false = HAS_36 ? 'false' : '""';
+    like dies { assert(!1) }, qr/\AAssertion failed \($false\)/;
 };
+
+sub expected_assert_bin {
+    my ($left, $op, $right) = @_;
+
+    my $m = match qr/\AAssertion failed \($left $op $right\)/;
+
+    if (HAS_36) {
+        return $m;
+    }
+
+    # Workaround to less than 5.36
+
+    if ($left eq 'true')  { $left = 1 if !HAS_36 }
+    if ($left eq 'false') { $left = "" if !HAS_36 }
+
+    my $m1 = match qr/\AAssertion failed \($left $op $right\)/;
+    my $m2 = match qr/\AAssertion failed \("$left" $op $right\)/;
+    my $m3 = match qr/\AAssertion failed \("$left" $op "$right"\)/;
+    return in_set($m, $m1, $m2, $m3);
+}
 
 subtest 'Test `assert(binary)` keyword' => sub {
 
     subtest 'NUM_EQ' => sub {
         my $x = 1;
         my $y = 2;
-        ok lives { assert( $x + $y == 3 ) };
+        ok lives { assert($x + $y == 3) };
 
-        like dies { assert( $x + $y == 100 ) },   qr/\AAssertion failed \(3 == 100\)/;
-        like dies { assert( $x == 100 ) },        qr/\AAssertion failed \(1 == 100\)/;
+        is dies { assert($x + $y == 100) }, expected_assert_bin(3, '==', 100);
+        is dies { assert($x == 100) },      expected_assert_bin(1, '==', 100);
 
-        my $true = $] >= 5.036 ? 'true' : '"1"';
-        my $false = $] >= 5.036 ? 'false' : '""';
-        like dies { assert( !!$x == 100 ) },        qr/\AAssertion failed \($true == 100\)/;
-        like dies { assert( !$x == 100 ) },        qr/\AAssertion failed \($false == 100\)/;
+        is dies { assert(!!$x == 100) }, expected_assert_bin('true',  '==', 100);
+        is dies { assert(!$x == 100) },  expected_assert_bin('false', '==', 100);
 
         my $message = 'hello';
-        my $undef = undef;
+        my $undef   = undef;
 
         my $warnings = warnings {
-            like dies { assert( $message == 100 ) },  qr/\AAssertion failed \("hello" == 100\)/;
-            like dies { assert( $undef == 100 ) },    qr/\AAssertion failed \(undef == 100\)/;
+            is dies { assert($message == 100) }, expected_assert_bin('"hello"', '==', 100);
+            is dies { assert($undef == 100) },   expected_assert_bin('undef',   '==', 100);
         };
+
         # suppressed warnings
         is scalar @$warnings, 2;
     };
 
     subtest 'NUM_NE' => sub {
         my $x = 2;
-        ok lives { assert( $x != 1 ) };
-        like dies { assert( $x != 2 ) }, qr/\AAssertion failed \(2 != 2\)/;
+        ok lives { assert($x != 1) };
+        is dies { assert($x != 2) }, expected_assert_bin(2, '!=', 2);
     };
 
     subtest 'NUM_LT' => sub {
         my $x = 2;
-        like dies { assert( $x < 1 ) }, qr/\AAssertion failed \(2 < 1\)/;
-        like dies { assert( $x < 2 ) }, qr/\AAssertion failed \(2 < 2\)/;
-        ok lives { assert( $x < 3 ) };
+        is dies { assert($x < 1) }, expected_assert_bin(2, '<', 1);
+        is dies { assert($x < 2) }, expected_assert_bin(2, '<', 2);
+        ok lives { assert($x < 3) };
 
         my $x2 = 2.01;
-        like dies { assert( $x2 < 2 ) }, qr/\AAssertion failed \(2.01 < 2\)/;
-        like dies { assert( $x2 < 2.01 ) }, qr/\AAssertion failed \(2.01 < 2.01\)/;
-        ok lives { assert( $x2 < 3 ) };
+        is dies { assert($x2 < 2) },    expected_assert_bin(2.01, '<', 2);
+        is dies { assert($x2 < 2.01) }, expected_assert_bin(2.01, '<', 2.01);
+        ok lives { assert($x2 < 3) };
 
         my $x3 = -1;
-        ok lives { assert( $x3 < 0 ) };
-        like dies { assert( $x3 < -1 ) }, qr/\AAssertion failed \(-1 < -1\)/;
-        like dies { assert( $x3 < -2 ) }, qr/\AAssertion failed \(-1 < -2\)/;
+        ok lives { assert($x3 < 0) };
+        is dies { assert($x3 < -1) }, expected_assert_bin(-1, '<', -1);
+        is dies { assert($x3 < -2) }, expected_assert_bin(-1, '<', -2);
 
         my $x4 = -1.01;
-        ok lives { assert( $x4 < 0 ) };
-        like dies { assert( $x4 < -1.01 ) }, qr/\AAssertion failed \(-1.01 < -1.01\)/;
-        like dies { assert( $x4 < -2 ) }, qr/\AAssertion failed \(-1.01 < -2\)/;
+        ok lives { assert($x4 < 0) };
+        is dies { assert($x4 < -1.01) }, expected_assert_bin(-1.01, '<', -1.01);
+        is dies { assert($x4 < -2) },    expected_assert_bin(-1.01, '<', -2);
     };
 
     subtest 'NUM_GT' => sub {
         my $x = 2;
-        ok lives { assert( $x > 1 ) };
-        like dies { assert( $x > 2 ) }, qr/\AAssertion failed \(2 > 2\)/;
-        like dies { assert( $x > 3 ) }, qr/\AAssertion failed \(2 > 3\)/;
+        ok lives { assert($x > 1) };
+        is dies { assert($x > 2) }, expected_assert_bin(2, '>', 2);
+        is dies { assert($x > 3) }, expected_assert_bin(2, '>', 3);
 
         my $x2 = 2.01;
-        ok lives { assert( $x2 > 2 ) };
-        like dies { assert( $x2 > 2.01 ) }, qr/\AAssertion failed \(2.01 > 2.01\)/;
-        like dies { assert( $x2 > 3 ) }, qr/\AAssertion failed \(2.01 > 3\)/;
+        ok lives { assert($x2 > 2) };
+        is dies { assert($x2 > 2.01) }, expected_assert_bin(2.01, '>', 2.01);
+        is dies { assert($x2 > 3) },    expected_assert_bin(2.01, '>', 3);
 
         my $x3 = -1;
-        like dies { assert( $x3 > 0 ) }, qr/\AAssertion failed \(-1 > 0\)/;
-        like dies { assert( $x3 > -1 ) }, qr/\AAssertion failed \(-1 > -1\)/;
-        ok lives { assert( $x3 > -2 ) };
+        is dies { assert($x3 > 0) },  expected_assert_bin(-1, '>',  0);
+        is dies { assert($x3 > -1) }, expected_assert_bin(-1, '>', -1);
+        ok lives { assert($x3 > -2) };
 
         my $x4 = -1.01;
-        like dies { assert( $x4 > 0 ) }, qr/\AAssertion failed \(-1.01 > 0\)/;
-        like dies { assert( $x4 > -1.01 ) }, qr/\AAssertion failed \(-1.01 > -1.01\)/;
-        ok lives { assert( $x4 > -2 ) };
+        is dies { assert($x4 > 0) },     expected_assert_bin(-1.01, '>',  0);
+        is dies { assert($x4 > -1.01) }, expected_assert_bin(-1.01, '>', -1.01);
+        ok lives { assert($x4 > -2) };
     };
 
     subtest 'STR_EQ' => sub {
         my $message = 'hello';
 
-        ok lives { assert( $message eq 'hello' ) };
-        like dies { assert( $message eq 'world' ) }, qr/\AAssertion failed \("hello" eq "world"\)/;
+        ok lives { assert($message eq 'hello') };
+        is dies { assert($message eq 'world') }, expected_assert_bin('"hello"', 'eq', '"world"');
 
-        my $x = 1;
+        my $x     = 1;
         my $undef = undef;
 
-        my $got = $] >= 5.036 ? '1' : '"1"';
-        like dies { assert( $x eq 'world' ) }, qr/\AAssertion failed \($got eq "world"\)/;
+        is dies { assert($x eq 'world') }, expected_assert_bin(1, 'eq', '"world"');
 
         my $warnings = warnings {
-            like dies { assert( $undef eq 'world' ) },   qr/\AAssertion failed \(undef eq "world"\)/;
+            is dies { assert($undef eq 'world') }, expected_assert_bin('undef', 'eq', '"world"');
         };
+
         # suppressed warnings
         is scalar @$warnings, 1;
     };
 
     subtest 'STR_NE' => sub {
         my $message = 'hello';
-        ok lives { assert( $message ne 'world' ) };
-        like dies { assert( $message ne 'hello' ) }, qr/\AAssertion failed \("hello" ne "hello"\)/;
+        ok lives { assert($message ne 'world') };
+        is dies { assert($message ne 'hello') }, expected_assert_bin('"hello"', 'ne', '"hello"');
     };
 
     subtest 'STR_LT' => sub {
         my $message = 'b';
-        like dies { assert( $message lt 'a' ) }, qr/\AAssertion failed \("b" lt "a"\)/;
-        like dies { assert( $message lt 'b' ) }, qr/\AAssertion failed \("b" lt "b"\)/;
-        ok lives { assert( $message lt 'c' ) };
+        is dies { assert($message lt 'a') }, expected_assert_bin('"b"', 'lt', '"a"');
+        is dies { assert($message lt 'b') }, expected_assert_bin('"b"', 'lt', '"b"');
+        ok lives { assert($message lt 'c') };
 
         my $unicode = "い";
-        like dies { assert( $unicode lt 'あ' ) }, qr/\AAssertion failed \("い" lt "あ"\)/;
-        like dies { assert( $unicode lt 'い' ) }, qr/\AAssertion failed \("い" lt "い"\)/;
-        ok lives { assert( $unicode lt 'う' ) };
+        is dies { assert($unicode lt 'あ') }, expected_assert_bin('"い"', 'lt', '"あ"');
+        is dies { assert($unicode lt 'い') }, expected_assert_bin('"い"', 'lt', '"い"');
+        ok lives { assert($unicode lt 'う') };
     };
 
     subtest 'STR_GT' => sub {
         my $message = 'b';
-        ok lives { assert( $message gt 'a' ) };
-        like dies { assert( $message gt 'b' ) }, qr/\AAssertion failed \("b" gt "b"\)/;
-        like dies { assert( $message gt 'c' ) }, qr/\AAssertion failed \("b" gt "c"\)/;
+        ok lives { assert($message gt 'a') };
+        is dies { assert($message gt 'b') }, expected_assert_bin('"b"', 'gt', '"b"');
+        is dies { assert($message gt 'c') }, expected_assert_bin('"b"', 'gt', '"c"');
 
         my $unicode = "い";
-        ok lives { assert( $unicode gt 'あ' ) };
-        like dies { assert( $unicode gt 'い' ) }, qr/\AAssertion failed \("い" gt "い"\)/;
-        like dies { assert( $unicode gt 'う' ) }, qr/\AAssertion failed \("い" gt "う"\)/;
+        ok lives { assert($unicode gt 'あ') };
+        is dies { assert($unicode gt 'い') }, expected_assert_bin('"い"', 'gt', '"い"');
+        is dies { assert($unicode gt 'う') }, expected_assert_bin('"い"', 'gt', '"う"');
     };
 
     subtest 'STR_LE' => sub {
         my $message = 'b';
-        like dies { assert( $message le 'a' ) }, qr/\AAssertion failed \("b" le "a"\)/;
-        ok lives { assert( $message le 'b' ) };
-        ok lives { assert( $message le 'c' ) };
+        is dies { assert($message le 'a') }, expected_assert_bin('"b"', 'le', '"a"');
+        ok lives { assert($message le 'b') };
+        ok lives { assert($message le 'c') };
 
         my $unicode = "い";
-        like dies { assert( $unicode le 'あ' ) }, qr/\AAssertion failed \("い" le "あ"\)/;
-        ok lives { assert( $unicode le 'い' ) };
-        ok lives { assert( $unicode le 'う' ) };
+        is dies { assert($unicode le 'あ') }, expected_assert_bin('"い"', 'le', '"あ"');
+        ok lives { assert($unicode le 'い') };
+        ok lives { assert($unicode le 'う') };
     };
 
     subtest 'STR_GE' => sub {
         my $message = 'b';
-        ok lives { assert( $message ge 'a' ) };
-        ok lives { assert( $message ge 'b' ) };
-        like dies { assert( $message ge 'c' ) }, qr/\AAssertion failed \("b" ge "c"\)/;
+        ok lives { assert($message ge 'a') };
+        ok lives { assert($message ge 'b') };
+        is dies { assert($message ge 'c') }, expected_assert_bin('"b"', 'ge', '"c"');
 
         my $unicode = "い";
-        ok lives { assert( $unicode ge 'あ' ) };
-        ok lives { assert( $unicode ge 'い' ) };
-        like dies { assert( $unicode ge 'う' ) }, qr/\AAssertion failed \("い" ge "う"\)/;
+        ok lives { assert($unicode ge 'あ') };
+        ok lives { assert($unicode ge 'い') };
+        is dies { assert($unicode ge 'う') }, expected_assert_bin('"い"', 'ge', '"う"');
     };
 };
 
