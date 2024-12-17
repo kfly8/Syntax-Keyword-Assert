@@ -69,7 +69,7 @@ When assertions are disabled, the C<assert> are completely ignored at compile ph
 
     assert(EXPR)
 
-If EXPR is trusy in scalar context, then happens nothing. Otherwise, it dies with a user-friendly error message.
+If EXPR is truthy in scalar context, then happens nothing. Otherwise, it dies with a user-friendly error message.
 
 Here are some examples:
 
