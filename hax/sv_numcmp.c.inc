@@ -53,6 +53,8 @@ static int S_sv_numcmp_flags(pTHX_ SV *lhs, SV *rhs, U32 flags)
       }
       case 3: /* UV <=> UV */
         return (SvUVX(lhs) > SvUVX(rhs)) - (SvUVX(lhs) < SvUVX(rhs));
+      default:
+        croak("unreachable");
     }
   }
   else {
