@@ -126,6 +126,20 @@ subtest 'Test `assert(binary)` keyword' => sub {
         ok lives { assert($x4 > -2) };
     };
 
+    subtest 'NUM_LE' => sub {
+        my $x = 2;
+        is dies { assert($x <= 1) }, expected_assert_bin(2, '<=', 1);
+        ok lives { assert($x <= 2) };
+        ok lives { assert($x <= 3) };
+    };
+
+    subtest 'NUM_GE' => sub {
+        my $x = 2;
+        ok lives { assert($x >= 1) };
+        ok lives { assert($x >= 2) };
+        is dies { assert($x >= 3) }, expected_assert_bin(2, '>=', 3);
+    };
+
     subtest 'STR_EQ' => sub {
         my $message = 'hello';
 
