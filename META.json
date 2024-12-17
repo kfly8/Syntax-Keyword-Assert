@@ -1,5 +1,5 @@
 {
-   "abstract" : "assert keyword for Perl with zero runtime cost in production",
+   "abstract" : "assert keyword for Perl with zero runtime cost",
    "author" : [
       "kobaken <kentafly88@gmail.com>"
    ],
