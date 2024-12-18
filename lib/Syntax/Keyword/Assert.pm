@@ -76,6 +76,7 @@ Here are some examples:
     assert("apple" eq "banana");  # => Assertion failed ("apple" eq "banana")
     assert(123 != 123);           # => Assertion failed (123 != 123)
     assert(1 > 10);               # => Assertion failed (1 > 10)
+    assert($foo isa Bar);         # => Assertion failed (Foo=HASH(0x11e022818) isa "Bar"
 
 =head1 SEE ALSO
 
