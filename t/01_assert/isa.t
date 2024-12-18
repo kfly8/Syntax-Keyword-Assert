@@ -4,7 +4,7 @@ use Syntax::Keyword::Assert;
 use lib 't/lib';
 use TestUtil;
 
-use Test2::Require::Module 'feature' => '1.45';
+use Test2::Require::Module 'feature' => '1.58';
 
 use experimental 'isa';
 
