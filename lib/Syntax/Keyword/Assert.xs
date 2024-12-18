@@ -12,7 +12,7 @@
 #include "sv_numeq.c.inc"
 #include "sv_numcmp.c.inc"
 #include "sv_streq.c.inc"
-#include "isa.c.inc"
+#include "sv_isa.c.inc"
 
 static bool assert_enabled = TRUE;
 
@@ -190,14 +190,12 @@ static OP *pp_assertbin(pTHX)
       op_str = "ge";
       break;
 
-#if HAVE_PERL_VERSION(5,31,7)
     case BINOP_ISA:
       if(sv_isa_sv(lhs, rhs))
         goto ok;
 
       op_str = "isa";
       break;
-#endif
 
     default:
       croak("ARGH unreachable");

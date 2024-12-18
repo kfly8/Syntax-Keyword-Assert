@@ -10,6 +10,6 @@ use experimental 'isa';
 
 my $obj = bless {}, 'Foo';
 ok lives { assert($obj isa Foo) };
-ok dies { assert($obj isa Bar) }, expected_assert_bin('Foo', 'isa', 'Bar');
+is dies { assert($obj isa Bar) }, match qr/Assertion failed \(Foo=HASH\(.+\) isa "Bar"\)/;
 
 done_testing;
