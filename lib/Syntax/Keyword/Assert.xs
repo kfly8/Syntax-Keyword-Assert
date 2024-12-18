@@ -12,6 +12,7 @@
 #include "sv_numeq.c.inc"
 #include "sv_numcmp.c.inc"
 #include "sv_streq.c.inc"
+#include "isa.c.inc"
 
 static bool assert_enabled = TRUE;
 
@@ -71,6 +72,7 @@ enum BinopType {
     BINOP_STR_GT,
     BINOP_STR_LE,
     BINOP_STR_GE,
+    BINOP_ISA,
 };
 
 static enum BinopType classify_binop(int type)
@@ -88,6 +90,7 @@ static enum BinopType classify_binop(int type)
     case OP_SGT: return BINOP_STR_GT;
     case OP_SLE: return BINOP_STR_LE;
     case OP_SGE: return BINOP_STR_GE;
+    case OP_ISA: return BINOP_ISA;
   }
   return BINOP_NONE;
 }
@@ -186,6 +189,15 @@ static OP *pp_assertbin(pTHX)
 
       op_str = "ge";
       break;
+
+#if HAVE_PERL_VERSION(5,31,7)
+    case BINOP_ISA:
+      if(sv_isa_sv(lhs, rhs))
+        goto ok;
+
+      op_str = "isa";
+      break;
+#endif
 
     default:
       croak("ARGH unreachable");

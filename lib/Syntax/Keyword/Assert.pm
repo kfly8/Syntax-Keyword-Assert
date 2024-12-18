@@ -50,8 +50,9 @@ Syntax::Keyword::Assert - assert keyword for Perl with zero runtime cost
 
     use Syntax::Keyword::Assert;
 
-    assert { 1 >= 10 };
-    # => Assertion failed (1 >= 10)
+    my $obj = bless {}, "Foo";
+    assert($obj isa "Bar");
+    # => Assertion failed (Foo=HASH(0x11e022818) isa "Bar")
 
 =head1 DESCRIPTION
 
