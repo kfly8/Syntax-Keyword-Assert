@@ -213,9 +213,9 @@ ok:
   RETURN;
 }
 
-static int build_assert(pTHX_ OP **out, XSParseKeywordPiece *arg0, void *hookdata)
+static int build_assert(pTHX_ OP **out, XSParseKeywordPiece *args[], size_t nargs, void *hookdata)
 {
-    OP *argop = arg0->op;
+    OP *argop = args[0]->op;
     if (assert_enabled) {
         enum BinopType binoptype = classify_binop(argop->op_type);
         if (binoptype) {
@@ -239,8 +239,15 @@ static int build_assert(pTHX_ OP **out, XSParseKeywordPiece *arg0, void *hookdat
 
 static const struct XSParseKeywordHooks hooks_assert = {
   .permit_hintkey = "Syntax::Keyword::Assert/assert",
-  .piece1 = XPK_TERMEXPR_SCALARCTX,
-  .build1 = &build_assert,
+  .pieces = (const struct XSParseKeywordPieceType[]) {
+    XPK_ARGS(
+      XPK_TERMEXPR_SCALARCTX,
+      XPK_OPTIONAL(XPK_COMMA),
+      XPK_TERMEXPR_SCALARCTX_OPT
+    ),
+    {0}
+  },
+  .build = &build_assert,
 };
 
 MODULE = Syntax::Keyword::Assert    PACKAGE = Syntax::Keyword::Assert
