@@ -31,3 +31,5 @@ MYMETA.*
 /Syntax-Keyword-Assert-*
 
 lib/Syntax/Keyword/Assert.c
+
+cpanfile.snapshot
