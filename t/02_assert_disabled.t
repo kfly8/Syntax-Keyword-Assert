@@ -1,7 +1,7 @@
 use Test2::V0;
 
 BEGIN {
-    $ENV{PERL_ASSERT_ENABLED} = !!0
+    $ENV{PERL_ASSERT_ENABLED} = 0
 }
 
 use Syntax::Keyword::Assert;
