@@ -54,6 +54,9 @@ Syntax::Keyword::Assert - assert keyword for Perl with zero runtime cost
     assert($obj isa "Bar");
     # => Assertion failed (Foo=HASH(0x11e022818) isa "Bar")
 
+    assert($x > 0, "x must be positive");
+    # => x must be positive
+
 =head1 DESCRIPTION
 
 Syntax::Keyword::Assert provides a syntax extension for Perl that introduces a C<assert> keyword.
@@ -94,7 +97,7 @@ This module also uses keyword plugin, but it depends on L<Keyword::Simple>. And 
 
 =item L<Devel::Assert>
 
-This module provides a similar functionality, but it dose not use a keyword plugin.
+This module provides a similar functionality, but it does not use a keyword plugin.
 
 =back
 
