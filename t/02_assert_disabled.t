@@ -30,4 +30,10 @@ subtest 'Test `assert` keyword when $ENV{PERL_ASSERT_ENABLED} is falsy' => sub {
     }, qr/\AUse of uninitialized value \$message in concatenation/;
 };
 
+subtest 'Test `assert` with custom message when disabled' => sub {
+    ok lives { assert(0, "should not die") };
+    ok lives { assert(1, "should not die") };
+    ok lives { assert(1 == 0, "should not die") };
+};
+
 done_testing;
