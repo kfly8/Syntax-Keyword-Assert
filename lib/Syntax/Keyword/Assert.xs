@@ -261,6 +261,7 @@ BOOT:
       SV *sv = newSVpvn(enabledstr, strlen(enabledstr));
       if(!SvTRUE(sv))
         assert_enabled = FALSE;
+      SvREFCNT_dec(sv);
     }
   }
 
