@@ -2,6 +2,10 @@ Revision history for Perl extension Syntax-Keyword-Assert
 
 {{$NEXT}}
 
+0.17 2025-12-08T13:44:46Z
+    - Add custom error message support #11
+    - Fix test failures on Windows and older Perl #13
+
 0.16 2024-12-18T09:01:18Z
     - Fixed `isa` operator #9
 
