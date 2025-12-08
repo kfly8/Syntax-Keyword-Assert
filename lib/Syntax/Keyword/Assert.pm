@@ -69,6 +69,7 @@ When assertions are disabled, the C<assert> are completely ignored at compile ph
 =head2 assert
 
     assert(EXPR)
+    assert(EXPR, MESSAGE)
 
 If EXPR is truthy in scalar context, then happens nothing. Otherwise, it dies with a user-friendly error message.
 
@@ -77,6 +78,11 @@ Here are some examples:
     assert("apple" eq "banana");  # => Assertion failed ("apple" eq "banana")
     assert(123 != 123);           # => Assertion failed (123 != 123)
     assert(1 > 10);               # => Assertion failed (1 > 10)
+
+You can provide a custom error message as the second argument:
+
+    assert($x > 0, "x must be positive");
+    # => x must be positive
 
 =head1 SEE ALSO
 

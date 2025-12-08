@@ -1,4 +1,4 @@
-[![Actions Status](https://github.com/kfly8/Syntax-Keyword-Assert/actions/workflows/test.yml/badge.svg)](https://github.com/kfly8/Syntax-Keyword-Assert/actions) [![Coverage Status](https://img.shields.io/coveralls/kfly8/Syntax-Keyword-Assert/main.svg?style=flat)](https://coveralls.io/r/kfly8/Syntax-Keyword-Assert?branch=main) [![MetaCPAN Release](https://badge.fury.io/pl/Syntax-Keyword-Assert.svg)](https://metacpan.org/release/Syntax-Keyword-Assert)
+[![Actions Status](https://github.com/kfly8/Syntax-Keyword-Assert/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/kfly8/Syntax-Keyword-Assert/actions?workflow=test) [![Coverage Status](https://img.shields.io/coveralls/kfly8/Syntax-Keyword-Assert/main.svg?style=flat)](https://coveralls.io/r/kfly8/Syntax-Keyword-Assert?branch=main) [![MetaCPAN Release](https://badge.fury.io/pl/Syntax-Keyword-Assert.svg)](https://metacpan.org/release/Syntax-Keyword-Assert)
 # NAME
 
 Syntax::Keyword::Assert - assert keyword for Perl with zero runtime cost
@@ -31,6 +31,7 @@ When assertions are disabled, the `assert` are completely ignored at compile pha
 
 ```
 assert(EXPR)
+assert(EXPR, MESSAGE)
 ```
 
 If EXPR is truthy in scalar context, then happens nothing. Otherwise, it dies with a user-friendly error message.
@@ -41,6 +42,13 @@ Here are some examples:
 assert("apple" eq "banana");  # => Assertion failed ("apple" eq "banana")
 assert(123 != 123);           # => Assertion failed (123 != 123)
 assert(1 > 10);               # => Assertion failed (1 > 10)
+```
+
+You can provide a custom error message as the second argument:
+
+```perl
+assert($x > 0, "x must be positive");
+# => x must be positive
 ```
 
 # SEE ALSO
