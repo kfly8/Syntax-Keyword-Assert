@@ -11,6 +11,9 @@ use Syntax::Keyword::Assert;
 my $obj = bless {}, "Foo";
 assert($obj isa "Bar");
 # => Assertion failed (Foo=HASH(0x11e022818) isa "Bar")
+
+assert($x > 0, "x must be positive");
+# => x must be positive
 ```
 
 # DESCRIPTION
@@ -59,7 +62,7 @@ assert($x > 0, "x must be positive");
 
 - [Devel::Assert](https://metacpan.org/pod/Devel%3A%3AAssert)
 
-    This module provides a similar functionality, but it dose not use a keyword plugin.
+    This module provides a similar functionality, but it does not use a keyword plugin.
 
 # LICENSE
 
