@@ -59,16 +59,12 @@ static OP *pp_assert(pTHX)
   croak_sv(msg);
 }
 
-static XOP xop_assert_msg;
-static OP *pp_assert_msg(pTHX)
+/* Called after msgop is evaluated to croak with the message */
+static XOP xop_assert_croak;
+static OP *pp_assert_croak(pTHX)
 {
   dSP;
   SV *custom_msg = POPs;
-  SV *val = POPs;
-
-  if(SvTRUE(val))
-    RETURN;
-
   croak_sv(custom_msg);
 }
 
@@ -187,9 +183,16 @@ static int build_assert(pTHX_ OP **out, XSParseKeywordPiece *args[], size_t narg
 
     if (assert_enabled) {
         if (msgop) {
-            // With custom message: use pp_assert_msg
-            // condop evaluates to true/false, msgop is the error message
-            *out = newBINOP_CUSTOM(&pp_assert_msg, 0, condop, msgop);
+            // With custom message: lazy evaluation using OP_OR
+            // assert(cond, msg) becomes: cond || do { croak(msg) }
+            //
+            // OP_OR: if condop is true, short-circuit; if false, evaluate other
+            // We use op_scope to isolate the other branch's op_next chain
+
+            OP *croakop     = newUNOP_CUSTOM(&pp_assert_croak, 0, msgop);
+            OP *scopedblock = op_scope(croakop);
+
+            *out = newLOGOP(OP_OR, 0, condop, scopedblock);
         }
         else {
             // Without custom message: check if binary operator for better error
@@ -248,10 +251,10 @@ BOOT:
   XopENTRY_set(&xop_assertbin, xop_class, OA_BINOP);
   Perl_custom_op_register(aTHX_ &pp_assertbin, &xop_assertbin);
 
-  XopENTRY_set(&xop_assert_msg, xop_name, "assert_msg");
-  XopENTRY_set(&xop_assert_msg, xop_desc, "assert with message");
-  XopENTRY_set(&xop_assert_msg, xop_class, OA_BINOP);
-  Perl_custom_op_register(aTHX_ &pp_assert_msg, &xop_assert_msg);
+  XopENTRY_set(&xop_assert_croak, xop_name, "assert_croak");
+  XopENTRY_set(&xop_assert_croak, xop_desc, "assert croak with message");
+  XopENTRY_set(&xop_assert_croak, xop_class, OA_UNOP);
+  Perl_custom_op_register(aTHX_ &pp_assert_croak, &xop_assert_croak);
 
   register_xs_parse_keyword("assert", &hooks_assert, NULL);
 

@@ -60,6 +60,53 @@ subtest 'custom message with string comparison' => sub {
     ok lives { assert("a" lt "b", "This should not appear") };
 };
 
+subtest 'lazy evaluation of custom message' => sub {
+    subtest 'message not evaluated when condition is true' => sub {
+        my $evaluated = 0;
+        my $get_msg = sub { $evaluated++; return "should not see this" };
+
+        ok lives { assert(1, $get_msg->()) };
+        is $evaluated, 0, "message expression is NOT evaluated when condition is true";
+    };
+
+    subtest 'message evaluated when condition is false' => sub {
+        my $evaluated = 0;
+        my $get_msg = sub { $evaluated++; return "assertion failed!" };
+
+        like dies { assert(0, $get_msg->()) },
+            qr/assertion failed!/;
+        is $evaluated, 1, "message expression is evaluated when condition is false";
+    };
+
+    subtest 'expensive computation skipped when true' => sub {
+        my @log;
+        my $expensive = sub { push @log, "computed"; return "error msg" };
+
+        ok lives { assert("truthy value", $expensive->()) };
+        is scalar(@log), 0, "expensive computation skipped when condition is true";
+    };
+
+    subtest 'side effects only on false' => sub {
+        my $side_effect_count = 0;
+        my $msg_with_side_effect = sub {
+            $side_effect_count++;
+            return "Side effect triggered $side_effect_count times";
+        };
+
+        # Multiple true assertions - side effects should NOT happen
+        ok lives { assert(1, $msg_with_side_effect->()) };
+        ok lives { assert("yes", $msg_with_side_effect->()) };
+        ok lives { assert(100, $msg_with_side_effect->()) };
+
+        is $side_effect_count, 0, "no side effects when all conditions are true";
+
+        # Now a false assertion - side effect SHOULD happen
+        like dies { assert(0, $msg_with_side_effect->()) },
+            qr/Side effect triggered/;
+        is $side_effect_count, 1, "side effect happened on false assertion";
+    };
+};
+
 subtest 'custom message with variables' => sub {
     subtest 'basic' => sub {
         my $x = 0;
