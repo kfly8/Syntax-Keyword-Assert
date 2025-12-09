@@ -87,6 +87,16 @@ You can provide a custom error message as the second argument:
     assert($x > 0, "x must be positive");
     # => x must be positive
 
+The message expression is lazily evaluated. It is only evaluated when the assertion fails.
+This is equivalent to:
+
+    $cond || do { die $msg }
+
+This means you can use expensive computations or side effects in the message without worrying about performance when the assertion passes:
+
+    assert($x > 0, expensive_debug_info());
+    # expensive_debug_info() is NOT called if $x > 0
+
 =head1 SEE ALSO
 
 =over 4
