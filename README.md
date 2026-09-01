@@ -68,6 +68,22 @@ assert($x > 0, expensive_debug_info());
 # expensive_debug_info() is NOT called if $x > 0
 ```
 
+# UNIMPORTING
+
+The `assert` keyword is lexically scoped. You can disable it for the rest of the enclosing scope with:
+
+```perl
+use Syntax::Keyword::Assert;
+
+assert(1);  # ok
+
+no Syntax::Keyword::Assert;
+
+assert(1);  # => Undefined subroutine &main::assert called ...
+```
+
+Once unimported, `assert` is no longer recognised as a keyword; it is parsed as an ordinary function call instead, which dies at runtime unless a subroutine of that name exists.
+
 # SEE ALSO
 
 - [PerlX::Assert](https://metacpan.org/pod/PerlX%3A%3AAssert)

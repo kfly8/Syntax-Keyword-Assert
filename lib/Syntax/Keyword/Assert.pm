@@ -97,6 +97,20 @@ This means you can use expensive computations or side effects in the message wit
     assert($x > 0, expensive_debug_info());
     # expensive_debug_info() is NOT called if $x > 0
 
+=head1 UNIMPORTING
+
+The C<assert> keyword is lexically scoped. You can disable it for the rest of the enclosing scope with:
+
+    use Syntax::Keyword::Assert;
+
+    assert(1);  # ok
+
+    no Syntax::Keyword::Assert;
+
+    assert(1);  # => Undefined subroutine &main::assert called ...
+
+Once unimported, C<assert> is no longer recognised as a keyword; it is parsed as an ordinary function call instead, which dies at runtime unless a subroutine of that name exists.
+
 =head1 SEE ALSO
 
 =over 4
