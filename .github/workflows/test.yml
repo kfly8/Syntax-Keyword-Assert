@@ -43,14 +43,14 @@ jobs:
           perl-version: ${{ matrix.perl }}
 
       - name: Install dependencies
-        run: cpm install -g --with-all
+        run: cpanm --installdeps --notest .
 
       - name: Install dependencies for integration tests
         if: ${{ matrix.integration }}
         run: |
-          cpm install -g Type::Tiny
-          cpm install -g Data::Checks
-          cpm install -g Syntax::Operator::Is
+          cpanm --notest Type::Tiny
+          cpanm --notest Data::Checks
+          cpanm --notest Syntax::Operator::Is
 
       - run: perl Build.PL
       - run: ./Build
@@ -61,6 +61,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          cpm install -g Devel::Cover::Report::Coveralls
+          cpanm --notest Devel::Cover::Report::Coveralls
           cover -test -report coveralls -ignore_re '^/opt'
 
