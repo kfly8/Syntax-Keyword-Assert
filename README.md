@@ -68,6 +68,34 @@ assert($x > 0, expensive_debug_info());
 # expensive_debug_info() is NOT called if $x > 0
 ```
 
+# IMPORTING
+
+```perl
+use Syntax::Keyword::Assert;
+```
+
+Importing the module enables the `assert` keyword in the current lexical scope (see ["UNIMPORTING"](#unimporting) to disable it again).
+
+## Bundling into your own module
+
+`assert` is enabled per lexical scope via `import_into`, so you can build a "toolkit" module that re-exports it to your users, the same way [Object::Pad](https://metacpan.org/pod/Object%3A%3APad) or [Syntax::Keyword::Try](https://metacpan.org/pod/Syntax%3A%3AKeyword%3A%3ATry) do:
+
+```perl
+package MyToolkit;
+
+use Syntax::Keyword::Assert ();
+
+sub import {
+    my $class  = shift;
+    my $caller = caller;
+
+    Syntax::Keyword::Assert->import_into( $caller );
+    # ... enable other keywords/pragmas here too
+}
+```
+
+Now `use MyToolkit;` gives the caller the `assert` keyword as well, without them having to `use Syntax::Keyword::Assert` directly.
+
 # UNIMPORTING
 
 The `assert` keyword is lexically scoped. You can disable it for the rest of the enclosing scope with:

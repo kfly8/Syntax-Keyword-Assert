@@ -97,6 +97,30 @@ This means you can use expensive computations or side effects in the message wit
     assert($x > 0, expensive_debug_info());
     # expensive_debug_info() is NOT called if $x > 0
 
+=head1 IMPORTING
+
+    use Syntax::Keyword::Assert;
+
+Importing the module enables the C<assert> keyword in the current lexical scope (see L</UNIMPORTING> to disable it again).
+
+=head2 Bundling into your own module
+
+C<assert> is enabled per lexical scope via C<import_into>, so you can build a "toolkit" module that re-exports it to your users, the same way L<Object::Pad> or L<Syntax::Keyword::Try> do:
+
+    package MyToolkit;
+
+    use Syntax::Keyword::Assert ();
+
+    sub import {
+        my $class  = shift;
+        my $caller = caller;
+
+        Syntax::Keyword::Assert->import_into( $caller );
+        # ... enable other keywords/pragmas here too
+    }
+
+Now C<use MyToolkit;> gives the caller the C<assert> keyword as well, without them having to C<use Syntax::Keyword::Assert> directly.
+
 =head1 UNIMPORTING
 
 The C<assert> keyword is lexically scoped. You can disable it for the rest of the enclosing scope with:
